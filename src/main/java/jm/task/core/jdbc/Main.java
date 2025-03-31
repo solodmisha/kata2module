@@ -1,13 +1,7 @@
 package jm.task.core.jdbc;
-
-import jm.task.core.jdbc.dao.UserDao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
-import jm.task.core.jdbc.util.Util;
-
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -15,10 +9,11 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
         main.run();
+
     }
 
     public void run() {
-        UserDao userService = new UserServiceImpl();
+        UserService userService = new UserServiceImpl();
         userService.createUsersTable();  // Создаем новую таблицу
 
         // Добавляем пользователей
