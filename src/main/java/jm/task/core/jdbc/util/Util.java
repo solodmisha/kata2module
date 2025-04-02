@@ -3,8 +3,6 @@ package jm.task.core.jdbc.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -57,28 +55,4 @@ public class Util {
         return sessionFactory;
     }
 
-    public static void testConnection() {
-        try (Connection connection = getConnection()) {
-            if (connection != null) {
-                System.out.println("Подключение к базе данных установлено!");
-            } else {
-                System.out.println("Ошибка подключения!");
-            }
-        } catch (SQLException e) {
-            System.out.println("Ошибка подключения: " + e.getMessage());
-        }
-    }
-
-    public static void testSessionFactory() {
-        try (Session session = getSessionFactory().openSession()) {
-            System.out.println("Hibernate успешно подключился к базе данных!");
-        } catch (Exception e) {
-            System.out.println("Ошибка подключения через Hibernate: " + e.getMessage());
-        }
-    }
-
-    public static void main(String[] args) {
-        Util.testConnection();
-        Util.testSessionFactory();
-    }
 }
