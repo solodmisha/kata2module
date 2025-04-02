@@ -4,6 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+import org.hibernate.service.ServiceRegistry;
+
 public class Util {
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/myapp";
@@ -21,5 +28,57 @@ public class Util {
 
         }
         return connection;
+    }
+
+    private static SessionFactory sessionFactory;
+
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            Configuration configuration = new Configuration();
+
+            // Настройки подключения к БД (пример для MySQL)
+            configuration.setProperty(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+            configuration.setProperty(Environment.URL, "jdbc:mysql://localhost:3306/myapp");
+            configuration.setProperty(Environment.USER, "michaelsolodeynikov");
+            configuration.setProperty(Environment.PASS, "PASSWORD");
+            configuration.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
+            configuration.setProperty(Environment.SHOW_SQL, "true");
+            configuration.setProperty(Environment.HBM2DDL_AUTO, "update");
+
+            // Регистрация классов-сущностей
+            configuration.addAnnotatedClass(jm.task.core.jdbc.model.User.class);
+
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties())
+                    .build();
+
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        }
+        return sessionFactory;
+    }
+
+    public static void testConnection() {
+        try (Connection connection = getConnection()) {
+            if (connection != null) {
+                System.out.println("Подключение к базе данных установлено!");
+            } else {
+                System.out.println("Ошибка подключения!");
+            }
+        } catch (SQLException e) {
+            System.out.println("Ошибка подключения: " + e.getMessage());
+        }
+    }
+
+    public static void testSessionFactory() {
+        try (Session session = getSessionFactory().openSession()) {
+            System.out.println("Hibernate успешно подключился к базе данных!");
+        } catch (Exception e) {
+            System.out.println("Ошибка подключения через Hibernate: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        Util.testConnection();
+        Util.testSessionFactory();
     }
 }
